@@ -54,6 +54,10 @@ def load_data(
 
     data_path = Path(data_path)
 
+    # If path is relative, make it relative to project root
+    if not data_path.is_absolute():
+        data_path = settings.project_root / data_path
+
     if not data_path.exists():
         raise DataLoadError(str(data_path), "Data file not found")
 

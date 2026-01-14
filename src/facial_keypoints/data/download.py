@@ -22,6 +22,19 @@ from pathlib import Path
 from facial_keypoints.config import settings
 
 
+def _resolve_data_dir(data_dir: Path | str | None) -> Path:
+    """Resolve data directory path, making relative paths absolute."""
+    if data_dir is None:
+        data_dir = settings.data_dir
+    data_dir = Path(data_dir)
+
+    # If path is relative, make it relative to project root
+    if not data_dir.is_absolute():
+        data_dir = settings.project_root / data_dir
+
+    return data_dir
+
+
 def check_kaggle_credentials() -> bool:
     """Check if Kaggle API credentials are configured.
 
@@ -65,9 +78,7 @@ def download_from_kaggle(
         >>> data_path = download_from_kaggle()
         >>> print(f"Data saved to: {data_path}")
     """
-    if data_dir is None:
-        data_dir = settings.data_dir
-    data_dir = Path(data_dir)
+    data_dir = _resolve_data_dir(data_dir)
     data_dir.mkdir(parents=True, exist_ok=True)
 
     # Check for kaggle credentials
@@ -156,9 +167,7 @@ def extract_nested_zips(data_dir: Path | str | None = None) -> None:
     Example:
         >>> extract_nested_zips()  # Extracts training.zip and test.zip
     """
-    if data_dir is None:
-        data_dir = settings.data_dir
-    data_dir = Path(data_dir)
+    data_dir = _resolve_data_dir(data_dir)
 
     for zip_name in ["training.zip", "test.zip"]:
         zip_path = data_dir / zip_name
@@ -193,9 +202,7 @@ def download_sample_data(
     import numpy as np  # noqa: PLC0415
     import pandas as pd  # noqa: PLC0415
 
-    if data_dir is None:
-        data_dir = settings.data_dir
-    data_dir = Path(data_dir)
+    data_dir = _resolve_data_dir(data_dir)
     data_dir.mkdir(parents=True, exist_ok=True)
 
     print(f"Generating {n_samples} synthetic samples...")
@@ -284,9 +291,7 @@ def verify_data(data_dir: Path | str | None = None) -> dict[str, bool]:
     """
     import pandas as pd  # noqa: PLC0415
 
-    if data_dir is None:
-        data_dir = settings.data_dir
-    data_dir = Path(data_dir)
+    data_dir = _resolve_data_dir(data_dir)
 
     results = {}
 
@@ -328,9 +333,7 @@ def get_data_info(data_dir: Path | str | None = None) -> dict[str, str | int]:
     """
     import pandas as pd  # noqa: PLC0415
 
-    if data_dir is None:
-        data_dir = settings.data_dir
-    data_dir = Path(data_dir)
+    data_dir = _resolve_data_dir(data_dir)
 
     info: dict[str, str | int] = {"data_dir": str(data_dir)}
 
