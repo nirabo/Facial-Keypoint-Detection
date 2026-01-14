@@ -70,7 +70,10 @@ def handle_kaggle(data_dir: Path | None) -> int:
     """Handle --kaggle command."""
     if not check_kaggle_credentials():
         print("Kaggle credentials not found!")
-        print("\nTo set up Kaggle API:")
+        print("\nOption 1: Environment variables (recommended for CI/scripts)")
+        print("  export KAGGLE_USERNAME=your_username")
+        print("  export KAGGLE_KEY=your_api_key")
+        print("\nOption 2: Credentials file")
         print("  1. Go to https://www.kaggle.com/account")
         print("  2. Click 'Create New API Token'")
         print("  3. Save kaggle.json to ~/.kaggle/")

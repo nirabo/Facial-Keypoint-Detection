@@ -7,10 +7,13 @@ The dataset is from the Kaggle Facial Keypoints Detection competition:
 https://www.kaggle.com/c/facial-keypoints-detection
 
 Requirements:
-    - Kaggle API credentials (~/.kaggle/kaggle.json)
+    - Kaggle API credentials via one of:
+        - ~/.kaggle/kaggle.json file
+        - KAGGLE_USERNAME and KAGGLE_KEY environment variables
     - Or manual download from Kaggle website
 """
 
+import os
 import shutil
 import subprocess
 import zipfile
@@ -22,9 +25,18 @@ from facial_keypoints.config import settings
 def check_kaggle_credentials() -> bool:
     """Check if Kaggle API credentials are configured.
 
+    Checks for credentials in order of precedence:
+    1. KAGGLE_USERNAME and KAGGLE_KEY environment variables
+    2. ~/.kaggle/kaggle.json file
+
     Returns:
-        True if credentials file exists, False otherwise.
+        True if credentials are available, False otherwise.
     """
+    # Check environment variables first (higher precedence)
+    if os.environ.get("KAGGLE_USERNAME") and os.environ.get("KAGGLE_KEY"):
+        return True
+
+    # Check for kaggle.json file
     kaggle_json = Path.home() / ".kaggle" / "kaggle.json"
     return kaggle_json.exists()
 
@@ -62,11 +74,14 @@ def download_from_kaggle(
     if not check_kaggle_credentials():
         msg = (
             "Kaggle API credentials not found.\n"
-            "Please set up your credentials:\n"
-            "1. Go to https://www.kaggle.com/account\n"
-            "2. Click 'Create New API Token'\n"
-            "3. Save kaggle.json to ~/.kaggle/kaggle.json\n"
-            "4. Run: chmod 600 ~/.kaggle/kaggle.json"
+            "Option 1: Set environment variables:\n"
+            "  export KAGGLE_USERNAME=your_username\n"
+            "  export KAGGLE_KEY=your_api_key\n"
+            "Option 2: Use credentials file:\n"
+            "  1. Go to https://www.kaggle.com/account\n"
+            "  2. Click 'Create New API Token'\n"
+            "  3. Save kaggle.json to ~/.kaggle/kaggle.json\n"
+            "  4. Run: chmod 600 ~/.kaggle/kaggle.json"
         )
         raise RuntimeError(msg)
 
