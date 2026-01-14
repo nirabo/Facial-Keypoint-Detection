@@ -1,0 +1,113 @@
+name: facial-keypoints
+
+services:
+  # Jupyter Lab for interactive development
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    image: facial-keypoints/jupyter:${VERSION:-latest}
+    container_name: ${PROJECT_NAME:-facial-keypoints}-jupyter-${ENV:-dev}
+    restart: unless-stopped
+    ports:
+      - "${JUPYTER_PORT:-8888}:8888"
+    environment:
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN:-facialkeys}
+    volumes:
+      - ./src:/app/src:ro
+      - ./notebooks:/app/notebooks
+      - ./data:/app/data:ro
+      - ./models:/app/models
+      - ./images:/app/images:ro
+      - ./detector_architectures:/app/detector_architectures:ro
+    networks:
+      - ml-network
+    profiles:
+      - dev
+
+  # Training service (CPU)
+  train:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: training
+    image: facial-keypoints/train:${VERSION:-latest}
+    container_name: ${PROJECT_NAME:-facial-keypoints}-train-${ENV:-dev}
+    volumes:
+      - ./data:/app/data:ro
+      - ./models:/app/models
+      - ./detector_architectures:/app/detector_architectures:ro
+    environment:
+      - EPOCHS=${EPOCHS:-50}
+      - BATCH_SIZE=${BATCH_SIZE:-64}
+      - LEARNING_RATE=${LEARNING_RATE:-0.001}
+      - VALIDATION_SPLIT=${VALIDATION_SPLIT:-0.2}
+      - MODEL_PATH=/app/models/model.keras
+      - TRAIN_DATA_PATH=/app/data/training.csv
+    networks:
+      - ml-network
+    profiles:
+      - train
+
+  # Training service (GPU)
+  train-gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: training-gpu
+    image: facial-keypoints/train-gpu:${VERSION:-latest}
+    container_name: ${PROJECT_NAME:-facial-keypoints}-train-gpu-${ENV:-dev}
+    volumes:
+      - ./data:/app/data:ro
+      - ./models:/app/models
+      - ./detector_architectures:/app/detector_architectures:ro
+    environment:
+      - EPOCHS=${EPOCHS:-50}
+      - BATCH_SIZE=${BATCH_SIZE:-64}
+      - LEARNING_RATE=${LEARNING_RATE:-0.001}
+      - VALIDATION_SPLIT=${VALIDATION_SPLIT:-0.2}
+      - MODEL_PATH=/app/models/model.keras
+      - TRAIN_DATA_PATH=/app/data/training.csv
+      - TF_FORCE_GPU_ALLOW_GROWTH=true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - ml-network
+    profiles:
+      - train-gpu
+
+  # Inference service
+  inference:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: inference
+    image: facial-keypoints/inference:${VERSION:-latest}
+    container_name: ${PROJECT_NAME:-facial-keypoints}-inference-${ENV:-dev}
+    volumes:
+      - ./models:/app/models:ro
+      - ./images:/app/images:ro
+      - ./output:/app/output
+      - ./detector_architectures:/app/detector_architectures:ro
+    environment:
+      - MODEL_PATH=/app/models/model.keras
+      - CASCADE_PATH=/app/detector_architectures/haarcascade_frontalface_default.xml
+    networks:
+      - ml-network
+    profiles:
+      - inference
+
+networks:
+  ml-network:
+    name: ${PROJECT_NAME:-facial-keypoints}-${ENV:-dev}
+    driver: bridge
+
+volumes:
+  model-data:
+    name: ${PROJECT_NAME:-facial-keypoints}-models-${ENV:-dev}
