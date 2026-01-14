@@ -1,0 +1,162 @@
+[project]
+name = "facial-keypoints"
+version = "1.0.0"
+description = "Facial Keypoint Detection using CNN and OpenCV"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "L. Petrov" }]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+]
+dependencies = [
+    "numpy>=2.0.0",
+    "pandas>=2.2.0",
+    "opencv-python>=4.9.0",
+    "tensorflow>=2.16.0",
+    "scikit-learn>=1.4.0",
+    "matplotlib>=3.8.0",
+    "pillow>=10.2.0",
+    "pydantic>=2.6.0",
+    "pydantic-settings>=2.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-cov>=6.0.0",
+    "pytest-mock>=3.14.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+    "ipykernel>=6.29.0",
+    "jupyterlab>=4.1.0",
+    "nbqa>=1.8.0",
+]
+notebook = [
+    "jupyterlab>=4.1.0",
+    "ipywidgets>=8.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/facial_keypoints"]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.3.0",
+    "pytest-cov>=6.0.0",
+    "pytest-mock>=3.14.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+    "ipykernel>=6.29.0",
+    "jupyterlab>=4.1.0",
+    "nbqa>=1.8.0",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src"]
+exclude = [".git", ".venv", "__pycache__", "build", "dist", "notebooks"]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
+    "ANN",    # flake8-annotations
+    "B",      # flake8-bugbear
+    "A",      # flake8-builtins
+    "C4",     # flake8-comprehensions
+    "DTZ",    # flake8-datetimez
+    "EM",     # flake8-errmsg
+    "ISC",    # flake8-implicit-str-concat
+    "ICN",    # flake8-import-conventions
+    "PIE",    # flake8-pie
+    "PT",     # flake8-pytest-style
+    "Q",      # flake8-quotes
+    "RSE",    # flake8-raise
+    "RET",    # flake8-return
+    "SIM",    # flake8-simplify
+    "TID",    # flake8-tidy-imports
+    "ARG",    # flake8-unused-arguments
+    "PTH",    # flake8-use-pathlib
+    "PL",     # pylint
+    "TRY",    # tryceratops
+    "PERF",   # perflint
+    "RUF",    # Ruff-specific rules
+]
+ignore = [
+    "ANN101",  # Missing type annotation for self
+    "ANN102",  # Missing type annotation for cls
+    "ANN401",  # Dynamically typed expressions (Any)
+    "PLR0913", # Too many arguments
+    "TRY003",  # Avoid specifying long messages outside exception class
+    "ISC001",  # Conflicts with formatter
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "ARG", "PLR2004", "ANN"]
+"notebooks/**/*.py" = ["ANN", "T20", "E501"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+known-first-party = ["facial_keypoints"]
+force-single-line = false
+lines-after-imports = 2
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+show_error_codes = true
+exclude = ["notebooks/", "tests/"]
+
+[[tool.mypy.overrides]]
+module = ["cv2.*", "tensorflow.*", "keras.*", "sklearn.*", "pandas.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["facial_keypoints.*"]
+# Allow flexible numpy array types for CV/ML code
+disable_error_code = ["arg-type", "return-value", "assignment"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--strict-markers --strict-config -ra --tb=short"
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "slow: Slow running tests",
+]

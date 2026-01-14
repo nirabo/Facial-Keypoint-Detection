@@ -1,0 +1,67 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+build/
+*.log
+
+# Testing
+.coverage
+htmlcov/
+coverage/
+coverage.xml
+
+# ML specific - data and models
+data/
+*.csv
+models/
+*.h5
+*.hdf5
+*.keras
+*.pb
+*.ckpt*
+weights/
+checkpoints/
+*.weights
+
+# Trained model files (generated)
+my_model*.h5
+weights*.hdf5
+
+# Large files
+*.model
+
+# Documentation build
+docs/_build/
+
+# UV lock file (optional - include if you want reproducible builds)
+# uv.lock
