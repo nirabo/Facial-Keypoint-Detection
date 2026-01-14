@@ -184,12 +184,58 @@ make type-check
 
 ### Data Setup
 
-Download the [Kaggle Facial Keypoints Detection dataset](https://www.kaggle.com/c/facial-keypoints-detection/data) and place files in `data/`:
+The training data comes from the [Kaggle Facial Keypoints Detection competition](https://www.kaggle.com/c/facial-keypoints-detection/data).
 
+**Option 1: Download via Kaggle API (recommended)**
+
+```bash
+# First, set up Kaggle API credentials:
+# 1. Go to https://www.kaggle.com/account
+# 2. Click "Create New API Token"
+# 3. Save kaggle.json to ~/.kaggle/
+# 4. chmod 600 ~/.kaggle/kaggle.json
+
+# Then download:
+python scripts/download_data.py --kaggle
+
+# Verify:
+python scripts/download_data.py --verify
+```
+
+**Option 2: Manual download**
+
+1. Go to https://www.kaggle.com/c/facial-keypoints-detection/data
+2. Download `training.csv` and `test.csv`
+3. Place them in the `data/` directory
+
+**Option 3: Generate sample data for testing**
+
+```bash
+# Generate synthetic data to test the pipeline
+python scripts/download_data.py --sample --n-samples 100
+```
+
+**Expected data structure:**
 ```
 data/
 ├── training.csv   # ~7000 images with 15 keypoints each
 └── test.csv       # ~1800 images (no keypoints)
+```
+
+**Using Python API:**
+```python
+from facial_keypoints.data import download_from_kaggle, verify_data, get_data_info
+
+# Download from Kaggle
+download_from_kaggle()
+
+# Check data status
+status = verify_data()
+print(status)  # {'training.csv': True, 'test.csv': True}
+
+# Get detailed info
+info = get_data_info()
+print(f"Training samples: {info['train_samples']}")
 ```
 
 ### Train Model

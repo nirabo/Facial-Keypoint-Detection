@@ -42,6 +42,9 @@ notebook = [
     "jupyterlab>=4.1.0",
     "ipywidgets>=8.1.0",
 ]
+kaggle = [
+    "kaggle>=1.6.0",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -110,6 +113,8 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["S101", "ARG", "PLR2004", "ANN"]
 "notebooks/**/*.py" = ["ANN", "T20", "E501"]
+"src/facial_keypoints/data/loader.py" = ["N803", "N806"]  # ML convention: X, y
+"scripts/**/*.py" = ["T20"]  # Allow print in scripts
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

@@ -14,6 +14,7 @@ from sklearn.utils import shuffle
 from facial_keypoints.config import settings
 from facial_keypoints.exceptions import DataLoadError
 
+
 if TYPE_CHECKING:
     from numpy.typing import NDArray
 
