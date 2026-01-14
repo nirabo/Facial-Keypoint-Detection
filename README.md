@@ -191,16 +191,24 @@ The training data comes from the [Kaggle Facial Keypoints Detection competition]
 ```bash
 # First, set up Kaggle API credentials:
 # 1. Go to https://www.kaggle.com/account
-# 2. Click "Create New API Token"
+# 2. Click "Create New API Token" (NOT the new KGAT tokens - see note below)
 # 3. Save kaggle.json to ~/.kaggle/
 # 4. chmod 600 ~/.kaggle/kaggle.json
 
+# Install kaggle CLI
+uv add kaggle
+
 # Then download:
-python scripts/download_data.py --kaggle
+uv run python scripts/download_data.py --kaggle
 
 # Verify:
-python scripts/download_data.py --verify
+uv run python scripts/download_data.py --verify
 ```
+
+> **Important**: The `kaggle` CLI requires **legacy API credentials**, not the newer KGAT_ tokens.
+> Use the "Create New API Token" button in your Kaggle account settings, which downloads a
+> `kaggle.json` file containing your username and API key. The new-style API tokens
+> (KGAT_...) are for the Kaggle API v2 and do not work with the legacy CLI.
 
 **Option 2: Manual download**
 

@@ -8,6 +8,9 @@ Usage:
     # Generate synthetic sample data for testing
     python scripts/download_data.py --sample --n-samples 100
 
+    # Extract nested zip files (training.zip, test.zip)
+    python scripts/download_data.py --extract
+
     # Verify existing data
     python scripts/download_data.py --verify
 
@@ -27,6 +30,7 @@ from facial_keypoints.data.download import (
     check_kaggle_credentials,
     download_from_kaggle,
     download_sample_data,
+    extract_nested_zips,
     get_data_info,
     verify_data,
 )
@@ -93,6 +97,14 @@ def handle_sample(data_dir: Path | None, n_samples: int) -> int:
     return 0
 
 
+def handle_extract(data_dir: Path | None) -> int:
+    """Handle --extract command."""
+    print("Extracting nested zip files...")
+    extract_nested_zips(data_dir)
+    print("\nExtraction complete!")
+    return 0
+
+
 def main() -> int:  # noqa: PLR0911
     """Main entry point for the data download script."""
     parser = argparse.ArgumentParser(
@@ -108,8 +120,12 @@ Examples:
 Kaggle Setup:
   1. Create account at kaggle.com
   2. Go to Settings -> API -> Create New Token
+     (NOT the new KGAT tokens - they don't work with the CLI)
   3. Save kaggle.json to ~/.kaggle/
   4. chmod 600 ~/.kaggle/kaggle.json
+
+Note: The kaggle CLI requires legacy API credentials (username + key),
+not the new KGAT_* tokens which are for Kaggle API v2.
         """,
     )
 
@@ -134,6 +150,11 @@ Kaggle Setup:
         help="Show information about downloaded data",
     )
     parser.add_argument(
+        "--extract",
+        action="store_true",
+        help="Extract nested zip files (training.zip, test.zip)",
+    )
+    parser.add_argument(
         "--n-samples",
         type=int,
         default=100,
@@ -149,7 +170,7 @@ Kaggle Setup:
     args = parser.parse_args()
 
     # Default action is to show help
-    if not any([args.kaggle, args.sample, args.verify, args.info]):
+    if not any([args.kaggle, args.sample, args.verify, args.info, args.extract]):
         parser.print_help()
         return 0
 
@@ -158,6 +179,8 @@ Kaggle Setup:
             return handle_verify(args.data_dir)
         if args.info:
             return handle_info(args.data_dir)
+        if args.extract:
+            return handle_extract(args.data_dir)
         if args.kaggle:
             return handle_kaggle(args.data_dir)
         if args.sample:

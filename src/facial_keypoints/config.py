@@ -61,6 +61,10 @@ class Settings(BaseSettings):
         default=Path("data/test.csv"),
         description="Path to test data CSV",
     )
+    data_dir: Path = Field(
+        default=Path("data"),
+        description="Directory for data files",
+    )
 
     # Image settings
     image_size: int = Field(

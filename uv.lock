@@ -586,6 +586,7 @@ name = "facial-keypoints"
 version = "1.0.0"
 source = { editable = "." }
 dependencies = [
+    { name = "kaggle" },
     { name = "matplotlib" },
     { name = "numpy" },
     { name = "opencv-python" },
@@ -634,6 +635,7 @@ requires-dist = [
     { name = "ipywidgets", marker = "extra == 'notebook'", specifier = ">=8.1.0" },
     { name = "jupyterlab", marker = "extra == 'dev'", specifier = ">=4.1.0" },
     { name = "jupyterlab", marker = "extra == 'notebook'", specifier = ">=4.1.0" },
+    { name = "kaggle", specifier = ">=1.8.3" },
     { name = "kaggle", marker = "extra == 'kaggle'", specifier = ">=1.6.0" },
     { name = "matplotlib", specifier = ">=3.8.0" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.13.0" },

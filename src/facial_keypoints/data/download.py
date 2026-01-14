@@ -121,6 +121,16 @@ def download_from_kaggle(
         zip_path.unlink()  # Remove zip after extraction
         print("Extraction complete!")
 
+    # Extract nested zip files (training.zip, test.zip)
+    # Kaggle competition data often contains nested zips
+    for nested_zip in ["training.zip", "test.zip"]:
+        nested_path = data_dir / nested_zip
+        if nested_path.exists():
+            print(f"Extracting nested {nested_zip}...")
+            with zipfile.ZipFile(nested_path, "r") as zf:
+                zf.extractall(data_dir)
+            nested_path.unlink()  # Remove nested zip after extraction
+
     # Verify expected files exist
     expected_files = ["training.csv", "test.csv"]
     for filename in expected_files:
@@ -132,6 +142,32 @@ def download_from_kaggle(
             print(f"  ✗ {filename} (not found)")
 
     return data_dir
+
+
+def extract_nested_zips(data_dir: Path | str | None = None) -> None:
+    """Extract nested zip files in the data directory.
+
+    Kaggle competition downloads often contain nested zips (training.zip, test.zip).
+    This function extracts them to get the actual CSV files.
+
+    Args:
+        data_dir: Directory containing the zip files.
+
+    Example:
+        >>> extract_nested_zips()  # Extracts training.zip and test.zip
+    """
+    if data_dir is None:
+        data_dir = settings.data_dir
+    data_dir = Path(data_dir)
+
+    for zip_name in ["training.zip", "test.zip"]:
+        zip_path = data_dir / zip_name
+        if zip_path.exists():
+            print(f"Extracting {zip_name}...")
+            with zipfile.ZipFile(zip_path, "r") as zf:
+                zf.extractall(data_dir)
+            zip_path.unlink()
+            print(f"  ✓ Extracted and removed {zip_name}")
 
 
 def download_sample_data(
