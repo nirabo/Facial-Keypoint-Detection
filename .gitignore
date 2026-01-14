@@ -40,10 +40,10 @@ htmlcov/
 coverage/
 coverage.xml
 
-# ML specific - data and models
-data/
+# ML specific - data and models (root level only)
+/data/
 *.csv
-models/
+/models/
 *.h5
 *.hdf5
 *.keras
